@@ -9,7 +9,7 @@ const cbet = require('./metrics/cbet.js');
 const vpip = require('./metrics/vpip.js');
 
 const rl = readline.createInterface({
-    input: fs.createReadStream('static/sample_mtt.txt')
+    input: fs.createReadStream("static/sample_mtt.txt")
 });
 
 winamax.parse(rl, [af, cbet, vpip]).then(function (results) {
@@ -42,4 +42,4 @@ winamax.parse(rl, [af, cbet, vpip]).then(function (results) {
             console.log('CBET Fold: ' + Math.round(100 * cbet_fold_p / (cbet_fold_p + cbet_fold_n)) + '% (' + (cbet_fold_p + cbet_fold_n) + ')');
         }
     });
-})
+});

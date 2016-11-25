@@ -93,7 +93,11 @@ function parse(rl, metrics) {
                     } while (skip[state](line));
                 }
             }
-            hand = processLine[state](hand, line);
+            try {
+                hand = processLine[state](hand, line);
+            } catch(e) {
+                state = 0;
+            }
         });
 
         rl.on('close', () => {

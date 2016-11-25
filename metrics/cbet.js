@@ -17,7 +17,7 @@ function compute(hand) {
     if (lastPreFlopRaise && flop && flop.actions.length) {
         let cbetOpportunity = true;
         let i = 0;
-        while (flop.actions[i].player !== lastPreFlopRaise.player) {
+        while (i < flop.actions.length && flop.actions[i].player !== lastPreFlopRaise.player) {
             if (flop.actions[i].type === 'BET') {
                 cbetOpportunity = false;
             }
