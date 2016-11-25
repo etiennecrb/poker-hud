@@ -29,6 +29,10 @@ class Hand {
     getPreFlop() {
         return this.rounds[1];
     }
+
+    getFlop() {
+        return this.rounds[2];
+    }
 }
 
 module.exports = Hand;
