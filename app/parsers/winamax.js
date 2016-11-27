@@ -62,6 +62,7 @@ module.exports = {
 function parse(rl, metrics) {
     let state = 0;
     let hand = void 0;
+    let lastHand = void 0;
     let results = {};
     const t0 = Date.now();
 
@@ -69,6 +70,7 @@ function parse(rl, metrics) {
         rl.on('line', (line) => {
             if (goToNextState[state](line)) {
                 if (endOfHand(state, line)) {
+                    lastHand = hand;
                     state = 0;
                     _(metrics).forEach(function (compute) {
                         _(compute(hand)).forEach(function (incrementObject, playerName) {
@@ -102,7 +104,7 @@ function parse(rl, metrics) {
 
         rl.on('close', () => {
             console.log('Duration: ' + (Date.now() - t0) + 'ms');
-            resolve(results);
+            resolve([results, lastHand]);
         });
     });
 }

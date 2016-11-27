@@ -1,0 +1,9 @@
+{
+  "name": "poker-hud",
+  "version": "1.0.0",
+  "description": "A simple poker HUD for Winamax",
+  "main": "main.js",
+  "dependencies": {
+    "lodash": "^4.17.2"
+  }
+}

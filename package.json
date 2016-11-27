@@ -1,15 +1,21 @@
 {
   "name": "poker-hud",
   "version": "1.0.0",
-  "description": "A simple poker HUD for Winamax",
+  "description": "Electron app dev environment for poker hud",
   "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
   "scripts": {
-    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/etiennecrb/poker-hud.git"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "lodash": "^4.17.2"
-  }
+  "bugs": {
+    "url": "https://github.com/etiennecrb/poker-hud/issues"
+  },
+  "homepage": "https://github.com/etiennecrb/poker-hud#readme"
 }
