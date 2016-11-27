@@ -11,9 +11,9 @@
 <div class="main">
     <div class="header">
         <div class="player-name">{{playerName}}</div>
-        <div class="hand-count">#{{handCount}}</div>
+        <div class="hand-count">#{{metrics['count'].value}}</div>
     </div>
-    <div class="content" ng-mousedown="toggleMetrics($event);" ng-show="!showAltMetrics">
+    <div class="content" ng-click="toggleMetrics();" ng-show="!showAltMetrics">
         <div class="metric" title="VP$IP">
             {{metrics['vpip'].value}}
         </div>
@@ -24,7 +24,7 @@
             {{metrics['af'].value}}
         </div>
     </div>
-    <div class="content" ng-mousedown="toggleMetrics($event);" ng-show="showAltMetrics">
+    <div class="content" ng-click="toggleMetrics();" ng-show="showAltMetrics">
         <div class="metric">
             {{metrics['cbet'].value}}
         </div>

@@ -21,15 +21,17 @@ function controllerFunc($scope, $timeout) {
         });
     });
 
-    function toggleMetrics(event) {
-        if (event.which === 3) {
-            $scope.showAltMetrics = !$scope.showAltMetrics;
-        }
+    function toggleMetrics() {
+        $scope.showAltMetrics = !$scope.showAltMetrics;
     }
 }
 
 function buildMetrics(metrics) {
     let results = {
+        count: {
+            name: 'count',
+            value: '0'
+        },
         vpip: {
             name: 'vpip',
             value: 'n/a'
@@ -52,6 +54,7 @@ function buildMetrics(metrics) {
         }
     };
 
+    const count = _.get(metrics, 'count', 0);
     const vpip = _.get(metrics, 'vpip', 0);
     const pfr = _.get(metrics, 'pfr', 0);
     const vnpip = _.get(metrics, 'vnpip', 0);
@@ -64,6 +67,7 @@ function buildMetrics(metrics) {
     const cbet_fold_p = _.get(metrics, 'cbet_fold_p', 0);
     const cbet_fold_n = _.get(metrics, 'cbet_fold_n', 0);
 
+    results['count'].value = '' + count;
     if (vpip + vnpip > 0) {
         results['vpip'].value = '' + Math.round(100 * vpip / (vpip + vnpip)) + '%';
         results['pfr'].value = '' + Math.round(100 * pfr / (vpip + vnpip)) + '%';

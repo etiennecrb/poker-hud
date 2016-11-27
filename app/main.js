@@ -12,5 +12,5 @@ app.on('window-all-closed', () => {
 });
 
 function onReady() {
-    hud.watch('/home/etienne/hud-test/');
+    hud.watch('/home/etienne/Winamax Poker/accounts/TiennouFurax/history');
 }

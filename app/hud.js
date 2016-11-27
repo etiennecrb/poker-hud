@@ -7,6 +7,7 @@ const _ = require('lodash');
 
 const parser = require('./common/parsers/winamax.js');
 const af = require('./common/metrics/af.js');
+const count = require('./common/metrics/count.js');
 const cbet = require('./common/metrics/cbet.js');
 const vpip = require('./common/metrics/vpip.js');
 
@@ -84,7 +85,7 @@ function parseFile(directory, filename) {
     const rl = readline.createInterface({
         input: fs.createReadStream(path.join(directory, filename))
     });
-    return parser.parse(rl, [af, cbet, vpip]);
+    return parser.parse(rl, [af, cbet, count, vpip]);
 }
 
 /**
@@ -96,7 +97,11 @@ function createHudWindow() {
         width: 150,
         height: 45,
         frame: false,
-        // resizable: false,
+        resizable: false,
+        minimizable: false,
+        maximizable: false,
+        fullscreenable: false,
+        skipTaskbar: true,
         useContentSize: true,
         alwaysOnTop: true
     });

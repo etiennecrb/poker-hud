@@ -36,6 +36,7 @@ html, body {
   display: flex;
   flex-direction: row;
   -webkit-app-region: no-drag;
+  cursor: pointer;
 }
 .metric {
   flex: 1;
