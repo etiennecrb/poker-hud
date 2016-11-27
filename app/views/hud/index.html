@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../fonts.css">
+    <link rel="stylesheet" type="text/css" href="./index.css">
+    <script src="../../static/angular.min.js"></script>
+    <script src="./index.js"></script>
+</head>
+<body ng-app="hud" ng-controller="hudController">
+<div class="main">
+    <div class="header">
+        <div class="player-name">{{playerName}}</div>
+        <div class="hand-count">#{{handCount}}</div>
+    </div>
+    <div class="content" ng-mousedown="toggleMetrics($event);" ng-show="!showAltMetrics">
+        <div class="metric" title="VP$IP">
+            {{metrics['vpip'].value}}
+        </div>
+        <div class="metric">
+            {{metrics['pfr'].value}}
+        </div>
+        <div class="metric">
+            {{metrics['af'].value}}
+        </div>
+    </div>
+    <div class="content" ng-mousedown="toggleMetrics($event);" ng-show="showAltMetrics">
+        <div class="metric">
+            {{metrics['cbet'].value}}
+        </div>
+        <div class="metric">
+            {{metrics['cbet_fold'].value}}
+        </div>
+    </div>
+</div>
+</body>
+</html>

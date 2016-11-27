@@ -1,52 +1,120 @@
-const ipc = require('electron').ipcRenderer;
+const { BrowserWindow } = require('electron');
+const fs = require('fs');
+const readline = require('readline');
+const url = require('url');
+const path = require('path');
 const _ = require('lodash');
 
-ipc.on('data', function (event, data) {
-    if (data.metrics && data.playerName) {
-        render(data.playerName, data.metrics);
+const parser = require('./common/parsers/winamax.js');
+const af = require('./common/metrics/af.js');
+const cbet = require('./common/metrics/cbet.js');
+const vpip = require('./common/metrics/vpip.js');
+
+let hudWindows = {};
+let watcher = void 0;
+
+module.exports = {
+    watch: watch
+};
+
+/**
+ * Watches changes in given directory and updates hud windows on change.
+ * @param {string} directory
+ */
+function watch(directory) {
+    if (watcher) {
+        watch.close();
     }
-});
 
-function render(playerName, metrics) {
-    const container = document.getElementById('hud');
-    // Empty container
-    while (container.firstChild) {
-        container.removeChild(container.firstChild);
-    }
-
-    const vpip = _.get(metrics, 'vpip', 0);
-    const pfr = _.get(metrics, 'pfr', 0);
-    const vnpip = _.get(metrics, 'vnpip', 0);
-    const af_pre_calls = _.get(metrics, 'af_pre_calls', 0);
-    const af_post_calls = _.get(metrics, 'af_post_calls', 0);
-    const af_pre_bets = _.get(metrics, 'af_pre_bets', 0);
-    const af_post_bets = _.get(metrics, 'af_post_bets', 0);
-    const cbet_p = _.get(metrics, 'cbet_p', 0);
-    const cbet_n = _.get(metrics, 'cbet_n', 0);
-    const cbet_fold_p = _.get(metrics, 'cbet_fold_p', 0);
-    const cbet_fold_n = _.get(metrics, 'cbet_fold_n', 0);
-
-    const title = document.createElement('strong');
-    title.innerHTML = playerName + ' (' + (vpip + vnpip) + ')';
-
-    const content = document.createElement('p');
-
-    if (vpip + vnpip > 0) {
-        content.innerHTML += '' + Math.round(100 * vpip / (vpip + vnpip)) + '% / ';
-        content.innerHTML += '' + Math.round(100 * pfr / (vpip + vnpip)) + '% / ';
-        if (af_pre_calls + af_post_calls > 0) {
-            content.innerHTML += '' + (Math.round(10 * (af_pre_bets + af_post_bets) / (af_pre_calls + af_post_calls)) / 10) + '';
-        } else if (af_pre_bets + af_post_bets > 0) {
-            content.innerHTML += 'Infinity ';
+    watcher = fs.watch(directory, (eventType, filename) => {
+        if (!hudShouldUpdate(eventType, filename)) {
+            return;
         }
-    }
-    if (cbet_p + cbet_n > 0) {
-        content.innerHTML += '<br>CBET: ' + Math.round(100 * cbet_p / (cbet_p + cbet_n)) + '% (' + (cbet_p + cbet_n) + ') / ';
-    }
-    if (cbet_fold_p + cbet_fold_n > 0) {
-        content.innerHTML += '' + Math.round(100 * cbet_fold_p / (cbet_fold_p + cbet_fold_n)) + '% (' + (cbet_fold_p + cbet_fold_n) + ')';
-    }
 
-    container.appendChild(title);
-    container.appendChild(content);
+        parseFile(directory, filename).then(function (results) {
+            const [metricsByPlayer, lastHand] = results;
+            const playerBySeat = lastHand ? lastHand.playerBySeat : {};
+
+            // Update hud windows with data from last hand players
+            _(playerBySeat).forEach((player, seat) => {
+                const data = {
+                    metrics: metricsByPlayer[player.name],
+                    playerName: player.name
+                };
+
+                if (!hudWindows[seat]) {
+                    hudWindows[seat] = createHudWindow();
+                    hudWindows[seat].on('closed', () => delete hudWindows[seat]);
+
+                    // hudWindows[seat].webContents.openDevTools();
+                    hudWindows[seat].webContents.on('did-finish-load', () => {
+                        updateHudWindow(hudWindows[seat], data);
+                    });
+                } else {
+                    updateHudWindow(hudWindows[seat], data);
+                }
+            });
+
+            // Close unused hud windows
+            _.difference(_.keys(hudWindows), _.keys(playerBySeat)).forEach((seat) => {
+                hudWindows[seat].close();
+            });
+        });
+
+    });
+}
+
+/**
+ * Checks if hud windows must be updated after a change event emitted by an fs watcher.
+ * @param {string} eventType
+ * @param {string} filename
+ * @returns {boolean}
+ */
+function hudShouldUpdate(eventType, filename) {
+    return eventType === 'change' && filename.indexOf('.txt') > -1 && filename.indexOf('summary') === -1;
+}
+
+/**
+ * Parses file and returns results.
+ * @param {string} directory
+ * @param {string} filename
+ * @returns {Promise}
+ */
+function parseFile(directory, filename) {
+    const rl = readline.createInterface({
+        input: fs.createReadStream(path.join(directory, filename))
+    });
+    return parser.parse(rl, [af, cbet, vpip]);
+}
+
+/**
+ * Creates a window that loads hud app.
+ * @returns {BrowserWindow}
+ */
+function createHudWindow() {
+    let hudWindow = new BrowserWindow({
+        width: 150,
+        height: 45,
+        frame: false,
+        // resizable: false,
+        useContentSize: true,
+        alwaysOnTop: true
+    });
+
+    hudWindow.loadURL(url.format({
+        pathname: path.join(__dirname, 'views/hud/index.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    return hudWindow;
+}
+
+/**
+ * Sends data to window.
+ * @param {BrowserWindow} hudWindow
+ * @param {*} data
+ */
+function updateHudWindow(hudWindow, data) {
+    hudWindow.webContents.send('update-data', data);
 }

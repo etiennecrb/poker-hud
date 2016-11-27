@@ -1,11 +1,11 @@
 const fp = require('lodash/fp');
 const _ = require('lodash');
 
-const Action = require('../common/Action.js');
-const Card = require('../common/Card.js');
-const Hand = require('../common/Hand.js');
-const Player = require('../common/Player.js');
-const Round = require('../common/Round.js');
+const Action = require('../models/Action.js');
+const Card = require('../models/Card.js');
+const Hand = require('../models/Hand.js');
+const Player = require('../models/Player.js');
+const Round = require('../models/Round.js');
 
 /*
  States:
