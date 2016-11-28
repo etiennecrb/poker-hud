@@ -1,29 +1,35 @@
 const ipc = require('electron').ipcRenderer;
 const _ = require('lodash');
 
-angular
-    .module('hud', [])
-    .controller('hudController',  ['$scope', '$timeout', controllerFunc]);
+let playerName = void 0;
+let metrics = void 0;
+let showAltMetrics = false;
 
-function controllerFunc($scope, $timeout) {
-    $scope.toggleMetrics = toggleMetrics;
+setVisibleMetrics(showAltMetrics);
 
-    $scope.playerName = void 0;
-    $scope.handCount = 0;
-    $scope.metrics = {};
-    $scope.showAltMetrics = false;
+ipc.on('update-data', (event, data) => {
+    playerName = data.playerName;
+    metrics = buildMetrics(data.metrics);
+    render(playerName, metrics);
+});
 
-    ipc.on('update-data', (event, data) => {
-        $timeout(() => {
-            $scope.playerName = data.playerName;
-            $scope.metrics = buildMetrics(data.metrics);
-            $scope.handCount = getHandCount(data.metrics);
-        });
+[].forEach.call(document.getElementsByClassName('content'), function (el) {
+    el.addEventListener('click', () => {
+        showAltMetrics = !showAltMetrics;
+        setVisibleMetrics(showAltMetrics);
     });
+});
 
-    function toggleMetrics() {
-        $scope.showAltMetrics = !$scope.showAltMetrics;
-    }
+function render(playerName, metrics) {
+    document.getElementById('player-name').firstChild.nodeValue = playerName;
+    ['count', 'vpip', 'pfr', 'af', 'cbet', 'cbet_fold'].forEach((metric) => {
+        document.getElementById('metric-' + metric).firstChild.nodeValue = metrics[metric].value;
+    });
+}
+
+function setVisibleMetrics(showAltMetrics) {
+    document.getElementById('main-metrics').style.display = showAltMetrics ? 'none' : null;
+    document.getElementById('alt-metrics').style.display = showAltMetrics ? null : 'none';
 }
 
 function buildMetrics(metrics) {
@@ -86,9 +92,4 @@ function buildMetrics(metrics) {
     }
 
     return results;
-}
-
-// TODO: this is not hand count
-function getHandCount(metrics) {
-    return vpip = _.get(metrics, 'vpip', 0) + _.get(metrics, 'vnpip', 0);
 }

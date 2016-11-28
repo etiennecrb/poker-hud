@@ -22,12 +22,12 @@ html, body {
   display: flex;
   flex-direction: row;
 }
-.player-name {
+#player-name {
   flex: 1;
   font-weight: bold;
   color: #cb4b16;
 }
-.hand-count {
+#metric-count {
   color: #859900;
 }
 .content {
