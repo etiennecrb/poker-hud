@@ -17,7 +17,7 @@ The widget shows the player's name, the number of hands for this player and from
 
 ![Alternative metrics](./static/alt_metrics.png)
 
-Click on the statistics to shows alternative metrics:
+Click on the statistics to show alternative metrics:
 * Percentage of continuation bet
 * Percentage of fold on continuation bet
 
