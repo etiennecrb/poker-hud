@@ -107,7 +107,7 @@ function createHudWindow() {
     });
 
     hudWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'views/hud/index.html'),
+        pathname: path.join(__dirname, 'app-hud/index.html'),
         protocol: 'file:',
         slashes: true
     }));
