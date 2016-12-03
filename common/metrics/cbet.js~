@@ -23,6 +23,9 @@ function compute(hand) {
             }
             i++;
         }
+		console.log(hand.id);
+		console.log(flop.actions);
+		console.log(lastPreFlopRaise.player.name);
         if (cbetOpportunity && flop.actions[i].type !== 'COLLECT') {
             if (flop.actions[i].type === 'BET' ) {
                 result[lastPreFlopRaise.player.name] = {cbet_p: 1};
