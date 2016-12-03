@@ -39,5 +39,5 @@ function onReady() {
 
 ``` bash
 # run
-electron app
+npm start
 ```
