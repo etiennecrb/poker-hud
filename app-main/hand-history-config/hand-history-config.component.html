@@ -1,0 +1,12 @@
+<select #room>
+  <option value="winamax" selected>Winamax</option>
+</select>
+<input #path type="file" webkitdirectory directory style="display: none;">
+<button (click)="path.click()">Hand history folder</button>
+<button (click)="addHandHistory(room.value, path.files[0]?.path)">Add</button>
+<ul>
+    <li *ngFor="let handHistoryElement of handHistories">
+        {{handHistoryElement.room}}: {{handHistoryElement.path}}
+        <button (click)="removeHandHistory(handHistoryElement)">Remove</button>
+    </li>
+</ul>

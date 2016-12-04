@@ -2,13 +2,13 @@ import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent }   from './app.component';
-import { HudControlsComponent }   from './hud/hud-controls/hud-controls.component';
+import { HandHistoryConfigComponent }   from './hand-history-config/hand-history-config.component';
 
 @NgModule({
   imports:      [ BrowserModule ],
   declarations: [
       AppComponent,
-      HudControlsComponent
+      HandHistoryConfigComponent
   ],
   bootstrap:    [ AppComponent ]
 })
