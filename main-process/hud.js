@@ -5,11 +5,11 @@ const url = require('url');
 const path = require('path');
 const _ = require('lodash');
 
-const parser = require('./common/parsers/winamax.js');
-const af = require('./common/metrics/af.js');
-const count = require('./common/metrics/count.js');
-const cbet = require('./common/metrics/cbet.js');
-const vpip = require('./common/metrics/vpip.js');
+const parser = require('../common/parsers/winamax.js');
+const af = require('../common/metrics/af.js');
+const count = require('../common/metrics/count.js');
+const cbet = require('../common/metrics/cbet.js');
+const vpip = require('../common/metrics/vpip.js');
 
 let hudWindows = {};
 let watcher = void 0;
