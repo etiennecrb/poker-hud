@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron');
+const reactiveIpcMain = require('./common/reactive-ipc-main');
 const config = require('./main-process/config.js');
-const hud = require('./main-process/hud.js');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -35,3 +35,7 @@ function onReady() {
         });
     });
 }
+
+reactiveIpcMain.on('test', (n) => {
+    return n * 7;
+});
