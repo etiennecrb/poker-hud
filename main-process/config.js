@@ -3,31 +3,38 @@ const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 
-let config = void 0;
+let appConfig = void 0;
 
 module.exports = {
+    get: get,
     load: load
 };
 
+function get() {
+    return appConfig;
+}
+
 function load(callback) {
     const appData = path.join(app.getPath('appData'), 'poker-hud');
+    const configPath = path.join(appData, 'config.json');
+
     mkdirp(appData, (err) => {
         if (err) {
             callback(err);
             return;
         }
-        const configPath = path.join(appData, 'config.json');
+        
         fs.readFile(configPath, function (err, data) {
             if (err) {
-                config = createEmptyConfig();
+                appConfig = createEmptyConfig();
                 fs.writeFile(configPath, JSON.stringify(config), (err) => {
                     if (!err) registerEventListeners();
-                    callback(err);
+                    callback(err, appConfig);
                 });
             } else {
-                config = JSON.parse(data);
+                appConfig = JSON.parse(data);
                 registerEventListeners();
-                callback(null);
+                callback(null, appConfig);
             }
         });
     });
