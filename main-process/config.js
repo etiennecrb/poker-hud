@@ -4,43 +4,59 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 
 let config = void 0;
+const loadingPromise = load();
 
 module.exports = {
-    load: load
+    get: get,
+    save: save
 };
 
-function load(callback) {
-    const appData = path.join(app.getPath('appData'), 'poker-hud');
-    mkdirp(appData, (err) => {
-        if (err) {
-            callback(err);
-            return;
-        }
-        const configPath = path.join(appData, 'config.json');
-        fs.readFile(configPath, function (err, data) {
+function getAppDataPath() {
+    return path.join(app.getPath('appData'), 'poker-hud');
+}
+
+function getConfigPath() {
+    return path.join(getAppDataPath(), 'config.json');
+}
+
+function save() {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(configPath, JSON.stringify(config), (err) => {
             if (err) {
-                config = createEmptyConfig();
-                fs.writeFile(configPath, JSON.stringify(config), (err) => {
-                    if (!err) registerEventListeners();
-                    callback(err);
-                });
+                reject(err);
             } else {
-                config = JSON.parse(data);
-                registerEventListeners();
-                callback(null);
+                resolve();
             }
         });
     });
 }
 
-function registerEventListeners() {
-    ipcMain.on('/config/hand_history_folders', (event) => {
-        event.sender.send('/config/hand_history_folders', config.handHistoryFolders);
+function get() {
+    return loadingPromise.then(() => config, () => createEmptyConfig());
+}
+
+function load() {
+    return new Promise((resolve, reject) => {
+        mkdirp(getAppDataPath(), (err) => {
+            if (err) {
+                reject(err);
+            }
+            const configPath = getConfigPath(); 
+            fs.readFile(configPath, function (err, data) {
+                if (err) {
+                    config = createEmptyConfig();
+                    save().then(resolve, reject);
+                } else {
+                    config = JSON.parse(data);
+                    resolve();
+                }
+            });
+        });
     });
 }
 
 function createEmptyConfig() {
     return {
-        handHistoryFolders: []
+        handHistoryFolders: new Set() 
     };
 }

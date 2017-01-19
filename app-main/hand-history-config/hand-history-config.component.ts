@@ -1,28 +1,39 @@
-import { Component, OnInit } from '@angular/core';
-
-import { HandHistoryConfig } from './hand-history-config';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+declare const reactiveIpcRenderer: any;
 
 @Component({
     selector: 'hand-history-config',
-    templateUrl: 'app-main/hand-history-config/hand-history-config.component.html',
-    providers: [HandHistoryConfig]
+    templateUrl: 'app-main/hand-history-config/hand-history-config.component.html'
 })
 export class HandHistoryConfigComponent implements OnInit {
-    handHistories: Array<any>;
+    handHistoryFolders: Array<any>;
 
-    constructor(private handHistoryConfig: HandHistoryConfig) { }
+    constructor(private changeDetectorRef: ChangeDetectorRef) {}
 
     ngOnInit(): void {
-        this.handHistories = this.handHistoryConfig.getAll();
+        reactiveIpcRenderer.send('config/handHistoryFolders/get')
+            .subscribe((handHistoryFolders) => {
+                this.handHistoryFolders = handHistoryFolders;
+                console.log(handHistoryFolders);
+                this.changeDetectorRef.detectChanges();
+            });
     }
 
     addHandHistory(room:string, path:string): void {
-        this.handHistoryConfig.setHandHistory({ room, path });
-        this.handHistories = this.handHistoryConfig.getAll();
+        reactiveIpcRenderer.send('config/handHistoryFolders/add', { room, path })
+            .subscribe((handHistoryFolders) => {
+                this.handHistoryFolders = handHistoryFolders;
+                console.log(handHistoryFolders);
+                this.changeDetectorRef.detectChanges();
+            });
     }
 
-    removeHandHistory(handHistory): void {
-        this.handHistoryConfig.removeHandHistory(handHistory);
-        this.handHistories = this.handHistoryConfig.getAll();
+    removeHandHistory(room:string, path:string): void {
+        reactiveIpcRenderer.send('config/handHistoryFolders/delete', { room, path })
+            .subscribe((handHistoryFolders) => {
+                this.handHistoryFolders = handHistoryFolders;
+                console.log(handHistoryFolders);
+                this.changeDetectorRef.detectChanges();
+            });
     }
 }
