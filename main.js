@@ -4,6 +4,7 @@ const _ = require('lodash');
 const config = require('./main-process/config.js');
 const HandHistoryManager = require('./main-process/hand_history_manager.js');
 
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow = void 0;
