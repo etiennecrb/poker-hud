@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 
+const utils = require('./utils.js');
+
 let config = void 0;
 const loadingPromise = load();
 
@@ -11,15 +13,12 @@ module.exports = {
     save: save
 };
 
-function getAppDataPath() {
-    return path.join(app.getPath('appData'), 'poker-hud');
-}
-
 function getConfigPath() {
-    return path.join(getAppDataPath(), 'config.json');
+    return path.join(utils.getAppDataPath(), 'config.json');
 }
 
 function save() {
+    const configPath = getConfigPath();
     return new Promise((resolve, reject) => {
         fs.writeFile(configPath, JSON.stringify(config), (err) => {
             if (err) {
@@ -37,11 +36,11 @@ function get() {
 
 function load() {
     return new Promise((resolve, reject) => {
-        mkdirp(getAppDataPath(), (err) => {
+        mkdirp(utils.getAppDataPath(), (err) => {
             if (err) {
                 reject(err);
             }
-            const configPath = getConfigPath(); 
+            const configPath = getConfigPath();
             fs.readFile(configPath, function (err, data) {
                 if (err) {
                     config = createEmptyConfig();
@@ -57,6 +56,9 @@ function load() {
 
 function createEmptyConfig() {
     return {
-        handHistoryFolders: new Set() 
+        handHistoryFolders: [{
+            room: 'winamax',
+            pathToFolder: ''
+        }]
     };
 }

@@ -2,7 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const _ = require('lodash');
 
 const config = require('./main-process/config.js');
-const HandHistoryManager = require('./main-process/hand_history_manager.js');
+const HandHistoryManager = require('./main-process/hand-history-manager.js');
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -20,20 +20,15 @@ app.on('window-all-closed', () => {
 });
 
 function onReady() {
-    config.load((err, appConfig) => {
-        if (err) {
-            throw err;
-        }
-
+    config.get().then((appConfig) => {
         createHandHistoryManagers(appConfig);
-        createMainWindow();
+        // createMainWindow();
     });
 }
 
 function createHandHistoryManagers(appConfig) {
     const lastSync = { getTime: () => 0 };
     _.get(appConfig, 'handHistoryFolders', []).forEach((handHistoryFolder) => {
-        console.log(handHistoryFolder);
         const handHistoryManager = new HandHistoryManager(handHistoryFolder.room, handHistoryFolder.pathToFolder);
         handHistoryManager.start(lastSync);
     });

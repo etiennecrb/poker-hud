@@ -1,5 +1,6 @@
 const fp = require('lodash/fp');
 const _ = require('lodash');
+const Rx = require('rxjs');
 
 const Action = require('../models/Action.js');
 const Card = require('../models/Card.js');
@@ -55,36 +56,22 @@ const skip = {
     8: fp.includes('***')
 };
 
-module.exports = {
-    parse: parse
-};
+module.exports = parse;
 
-function parse(rl, metrics) {
+function parse(rl) {
     let state = 0;
     let hand = void 0;
-    let lastHand = void 0;
-    let results = {};
     const t0 = Date.now();
 
-    return new Promise(function (resolve) {
+    return Rx.Observable.create((subscriber) => {
         rl.on('line', (line) => {
             if (goToNextState[state](line)) {
                 if (endOfHand(state, line)) {
-                    lastHand = hand;
+                    if (!hand) {
+                        console.log(hand);
+                    }
+                    subscriber.next(hand);
                     state = 0;
-                    _(metrics).forEach(function (compute) {
-                        _(compute(hand)).forEach(function (incrementObject, playerName) {
-                            if (!results[playerName]) {
-                                results[playerName] = {};
-                            }
-                            _(incrementObject).forEach(function (value, metric) {
-                                if (!results[playerName][metric]) {
-                                    results[playerName][metric] = 0;
-                                }
-                                results[playerName][metric] += value;
-                            });
-                        });
-                    });
                 } else {
                     do {
                         if (state === 8) {
@@ -104,7 +91,7 @@ function parse(rl, metrics) {
 
         rl.on('close', () => {
             console.log('Duration: ' + (Date.now() - t0) + 'ms');
-            resolve([results, lastHand]);
+            subscriber.complete();
         });
     });
 }
@@ -144,7 +131,7 @@ function parseRoundLine(hand, line) {
     if (cardsString) {
         cards = fp.map(cardsString.split(' '), (s) => new Card(s));
     }
-    hand.rounds.push(new Round(hand, cards, []));
+    hand.rounds.push(new Round(cards, []));
     return hand;
 }
 

@@ -1,8 +1,10 @@
 const fs = require('fs');
-const path = require('path');
+const path = require('path')
 const _ = require('lodash');
-const { Observable } = require('rxjs');
-const HandHistoryDatabase = require('./hand_history_database');
+const Rx = require('rxjs');
+
+const parser = require('../common/parsers/index.js');
+const HandHistoryDatabase = require('./hand-history-database.js');
 
 class HandHistoryManager {
 	constructor(room, pathToFolder) {
@@ -11,13 +13,13 @@ class HandHistoryManager {
 		this.watcher = void 0;
 	}
 	start(lastSync) {
-		Observable.bindNodeCallback(fs.readdir)(this.pathToFolder)
+		Rx.Observable.bindNodeCallback(fs.readdir)(this.pathToFolder)
 			.mergeMap((files) => {
-				const array = files.map((fileName) => Observable
+				const array = files.map((fileName) => Rx.Observable
 					.bindNodeCallback(fs.stat)(path.join(this.pathToFolder, fileName))
 					.map((stats) => [fileName, stats.mtime.getTime()])
 					);
-				return Observable.concat(...array);
+				return Rx.Observable.concat(...array);
 			})
 			.filter(([fileName, mtime]) => mtime > lastSync.getTime())
 			.subscribe(([fileName, stats]) => this.parseFile(fileName));
@@ -38,9 +40,10 @@ class HandHistoryManager {
 		this.watcher = fs.watch(this.pathToFolder, _.debounce(parseFileIfHandHistoryWasUpdated, 200));
 	}
 	parseFile(fileName) {
-		// Parse file and put results in DB
-		console.log('Parse ' + fileName);
-		HandHistoryDatabase.addFile(fileName);
+		parser.parseFile(this.room, path.join(this.pathToFolder, fileName))
+			.subscribe((hand) => {
+				HandHistoryDatabase.upsert(hand);
+			});
 	}
 }
 
