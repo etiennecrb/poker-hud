@@ -1,8 +1,9 @@
 import { app, BrowserWindow } from 'electron';
 import * as _ from 'lodash';
 
-import Config  from './Config';
-import HandHistoryManager from './HandHistoryManager';
+import Config  from './Config/Config';
+import ConfigObject from './Config/ConfigObject';
+import HandHistoryManager from './HandHistory/HandHistoryManager';
 
 class Main {
     private mainWindow: Electron.BrowserWindow;
@@ -15,18 +16,17 @@ class Main {
     }
 
     private onReady(): void {
-        Config.get().then((appConfig) => {
+        Config.load().subscribe((appConfig) => {
             this.handHistoryManagers = Main.createHandHistoryManagers(appConfig);
             // this.createMainWindow();
         });
     }
 
-    private static createHandHistoryManagers(appConfig: {}): HandHistoryManager[] {
+    private static createHandHistoryManagers(appConfig: ConfigObject): HandHistoryManager[] {
         const lastSync = new Date(1970, 10, 10);
-        return (appConfig['handHistoryFolders'] || [])
-            .map(({ room, pathToFolder }) => {
-                return new HandHistoryManager(room, pathToFolder).start(lastSync);
-            });
+        return appConfig.handHistoryFolders.map(({ room, pathToFolder, lastSync }) => {
+            return new HandHistoryManager(room, pathToFolder).start(lastSync);
+        });
     }
 
 

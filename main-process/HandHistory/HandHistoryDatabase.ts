@@ -2,11 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as Datastore from 'nedb';
 
-import Utils from './Utils';
-import Hand from '../common/models/Hand';
+import Utils from '../Utils/Utils';
+import Hand from '../../common/models/Hand';
 
 class HandHistoryDatabase {
-    private loaded: Promise<{}>;
     private db: Datastore;
     private dbPath: string = path.join(Utils.getAppDataPath(), 'hand_history.db');
 
