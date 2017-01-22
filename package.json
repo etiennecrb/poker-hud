@@ -4,7 +4,7 @@
   "description": "Electron app dev environment for poker hud",
   "main": "main.js",
   "scripts": {
-    "start": "tsc && concurrently \"npm run tsc:w\" \"electron .\" ",
+    "start": "tsc && concurrently \"npm run tsc:w\" \"electron ./dist/index.js\" ",
     "tsc": "tsc",
     "tsc:w": "tsc -w"
   },
@@ -18,9 +18,12 @@
     "@angular/platform-browser-dynamic": "~2.2.0",
     "@angular/router": "~3.2.0",
     "@angular/upgrade": "~2.2.0",
+    "@types/electron": "^1.4.31",
     "@types/lodash": "^4.14.41",
+    "@types/lodash.curry": "^4.1.0",
+    "@types/mkdirp": "^0.3.29",
+    "@types/nedb": "0.0.31",
     "angular-in-memory-web-api": "~0.1.15",
-    "core-js": "^2.4.1",
     "lodash": "^4.17.2",
     "mkdirp": "^0.5.1",
     "nedb": "^1.8.0",
@@ -31,7 +34,6 @@
     "zone.js": "^0.6.25"
   },
   "devDependencies": {
-    "@types/core-js": "^0.9.34",
     "@types/node": "^6.0.45",
     "concurrently": "^3.0.0",
     "typescript": "^2.0.3",

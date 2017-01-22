@@ -1,9 +1,9 @@
-const { BrowserWindow } = require('electron');
-const fs = require('fs');
-const readline = require('readline');
-const url = require('url');
-const path = require('path');
-const _ = require('lodash');
+import { BrowserWindow } from 'electron';
+import fs = require('fs');
+import readline = require('readline');
+import url = require('url');
+import path = require('path');
+import _ = require('lodash');
 
 const parser = require('../common/parsers/winamax.js');
 const af = require('../common/metrics/af.js');
@@ -14,7 +14,7 @@ const vpip = require('../common/metrics/vpip.js');
 let hudWindows = {};
 let watcher = void 0;
 
-module.exports = {
+export default {
     watch: watch
 };
 
@@ -24,7 +24,7 @@ module.exports = {
  */
 function watch(directory) {
     if (watcher) {
-        watch.close();
+        watcher.close();
     }
 
     watcher = fs.watch(directory, (eventType, filename) => {
