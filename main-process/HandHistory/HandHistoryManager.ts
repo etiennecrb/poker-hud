@@ -43,14 +43,13 @@ export default class HandHistoryManager {
 
     private watch(): void {
         const parseFileIfHandHistoryWasUpdated = (eventType, filename) => {
-            if (eventType === 'change' && filename.indexOf('.txt') > -1 &&
-                filename.indexOf('summary') === -1) {
+            if (eventType === 'change' && filename.indexOf('.txt') > -1 && filename.indexOf('summary') === -1) {
                 this.parseFile(filename)
                     .subscribe((hand) => HudManager.setLastHand(hand));
                 Config.setLastSync(this.room);
             }
         };
-        const watcherCallback = _.debounce(parseFileIfHandHistoryWasUpdated, 200);
+        const watcherCallback = _.debounce(parseFileIfHandHistoryWasUpdated, 500);
         this.watcher = fs.watch(this.pathToFolder, watcherCallback);
     }
 

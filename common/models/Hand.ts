@@ -9,6 +9,7 @@ export default class Hand {
         public id: string,
         public date: Date,
         public playerBySeat: { [i: number]: Player },
+        public playerNames: string[],
         public buttonSeat: Number,
         public rounds: Round[]
     ) {}

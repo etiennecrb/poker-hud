@@ -21,9 +21,6 @@ class WinamaxParser implements RoomParser {
             rl.on('line', (line) => {
                 if (WinamaxParser.goToNextState[state](line)) {
                     if (WinamaxParser.endOfHand(state, line)) {
-                        if (!hand) {
-                            console.log(hand);
-                        }
                         subscriber.next(hand);
                         state = 0;
                     } else {
@@ -105,7 +102,7 @@ class WinamaxParser implements RoomParser {
         let id = split[2].slice(idPrefix.length);
         let date = new Date(split[4]);
 
-        return new Hand(id, date, {}, void 0, []);
+        return new Hand(id, date, {}, [], void 0, []);
     }
 
     private static parseButtonSeat(hand: Hand, line: string): Hand {
@@ -121,6 +118,7 @@ class WinamaxParser implements RoomParser {
         let playerBySeat = {};
         playerBySeat[seat] = new Player(playerName);
         hand.playerBySeat = _.extend(hand.playerBySeat, playerBySeat);
+        hand.playerNames.push(playerName);
         return hand;
     }
 

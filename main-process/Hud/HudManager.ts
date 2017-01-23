@@ -5,7 +5,9 @@ import * as _ from 'lodash';
 
 import Hand from '../../common/models/Hand';
 import Player from '../../common/models/Player';
-import Metric from '../../common/metrics/Metric';
+import MetricsObject from '../../common/metrics/MetricsObject';
+import MetricsEngine from '../../common/metrics/MetricsEngine';
+import HandHistoryDatabase from '../HandHistory/HandHistoryDatabase';
 
 class HudManager {
     private lastHand: Hand;
@@ -14,16 +16,19 @@ class HudManager {
     setLastHand(lastHand: Hand): void {
         this.lastHand = lastHand;
 
-        // TODO: retrieve metrics by players
-        const metricsByPlayer = {};
-        this.updateHudWindows(this.lastHand.playerBySeat, metricsByPlayer);
+        HandHistoryDatabase.find({ playerNames: lastHand.playerNames })
+            .subscribe((hands) => {
+                const metricsByPlayer = MetricsEngine.compute(hands, _.values(lastHand.playerBySeat));
+                console.log(metricsByPlayer);
+                this.updateHudWindows(this.lastHand.playerBySeat, metricsByPlayer);
+            });
     }
 
     /**
      * Update hud windows with data from last hand players
      */
-    private updateHudWindows(playerBySeat: {[i: number]: Player}, metricsByPlayer: {[s: string]: Metric}): void {
-        _.forIn(playerBySeat, (player, seat) => {
+    private updateHudWindows(playerBySeat: {[i: number]: Player}, metricsByPlayer: {[s: string]: MetricsObject}): void {
+        _.forIn(playerBySeat, (player: Player, seat: string) => {
             const data = {
                 metrics: metricsByPlayer[player.name],
                 playerName: player.name
