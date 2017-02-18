@@ -12,25 +12,29 @@ class Main {
     run(): void {
         // Register event listeners
         app.on('ready', this.onReady);
-        app.on('window-all-closed', this.onWindowAllClosed);
+        app.on('window-all-closed', Main.onWindowAllClosed);
     }
 
     private onReady(): void {
-        Config.load().subscribe((appConfig) => {
-            this.handHistoryManagers = Main.createHandHistoryManagers(appConfig);
-            // this.createMainWindow();
-        });
+        Config.load()
+            .on('ready', (appConfig) => {
+                this.handHistoryManagers = Main.createHandHistoryManagers(appConfig);
+                this.createMainWindow();
+            })
+            .on('handHistoryFoldersChange', (appConfig) => {
+                this.handHistoryManagers.forEach((manager) => manager.stop());
+                this.handHistoryManagers = Main.createHandHistoryManagers(appConfig);
+            });
     }
 
     private static createHandHistoryManagers(appConfig: ConfigObject): HandHistoryManager[] {
-        const lastSync = new Date(1970, 10, 10);
         return appConfig.handHistoryFolders.map(({ room, pathToFolder, lastSync }) => {
             return new HandHistoryManager(room, pathToFolder).start(lastSync);
         });
     }
 
 
-    private createMainWindow() {
+    createMainWindow(): void {
         this.mainWindow = new BrowserWindow({width: 800, height: 600});
 
         // and load the index.html of the app.
@@ -46,7 +50,7 @@ class Main {
         });
     }
 
-    private onWindowAllClosed(): void {
+    private static onWindowAllClosed(): void {
         // On macOS it is common for applications and their menu bar
         // to stay active until the user quits explicitly with Cmd + Q
         if (process.platform !== 'darwin') {

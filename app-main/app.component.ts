@@ -7,9 +7,5 @@ declare const reactiveIpcRenderer: any;
 })
 export class AppComponent {
     constructor() {
-        reactiveIpcRenderer.send('test', 6)
-            .subscribe((result) => {
-                console.log(result);
-            });
     }
 }

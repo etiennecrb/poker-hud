@@ -1,38 +1,40 @@
-import { app } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
 import * as Rx from 'rxjs';
 import * as _ from 'lodash';
+import * as EventEmitter from 'events';
 
 import ConfigObject from './ConfigObject';
+import HandHistoryFolder from './HandHistoryFolder';
 import Utils from '../Utils/Utils';
 
-class Config {
+class Config extends EventEmitter {
     private config: ConfigObject;
     private static version: number = 0.1;
     private static configPath: string = Config.getConfigPath();
 
-    load(): Rx.Observable<ConfigObject> {
-        return Rx.Observable.create((subscriber) => {
-            mkdirp(Utils.getAppDataPath(), (err) => {
-                if (err) {
-                    throw err;
-                }
-                fs.readFile(Config.configPath, 'utf-8', (err, data) => {
-                    const config = !err ? Config.parse(data) : null;
-                    if (config && config.version == Config.version) {
-                        this.config = config;
-                    } else {
-                        this.config = Config.createEmptyConfig();
-                        this.save();
-                    }
+    constructor() {
+        super();
+    }
 
-                    subscriber.next(this.config);
-                    subscriber.complete();
-                });
+    load(): Config {
+        mkdirp(Utils.getAppDataPath(), (err) => {
+            if (err) {
+                throw err;
+            }
+            fs.readFile(Config.configPath, 'utf-8', (err, data) => {
+                const config = !err ? Config.parse(data) : null;
+                if (config && config.version == Config.version) {
+                    this.config = config;
+                } else {
+                    this.config = Config.createEmptyConfig();
+                    this.save();
+                }
+                this.emit('ready', this.config);
             });
         });
+        return this;
     }
 
     get() {
@@ -45,6 +47,12 @@ class Config {
             folder.lastSync = new Date();
             this.save();
         }
+    }
+
+    setHandHistoryFolders(handHistoryFolders: HandHistoryFolder[]): void {
+        this.config.handHistoryFolders = handHistoryFolders;
+        this.save();
+        this.emit('handHistoryFoldersChanged', this.config);
     }
 
     private save(): Config {
