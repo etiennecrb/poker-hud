@@ -10,7 +10,7 @@ class Parser {
         winamax: WinamaxParser
     };
 
-    static parseFile(room: string, pathToFile: string): Rx.Observable<Hand> {
+    static parseFile(room: string, pathToFile: string): Promise<Hand[]> {
         if (!Parser.roomToParser[room]) {
             throw `no parser registered for room ${room}`;
         }

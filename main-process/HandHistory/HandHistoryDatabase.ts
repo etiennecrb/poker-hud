@@ -26,8 +26,10 @@ class HandHistoryDatabase {
         });
     }
 
-    upsert(object: Hand) {
-        this.db.update({ id: object.id }, object, { upsert: true });
+    upsert(object: Hand|Hand[]) {
+        (Array.isArray(object) ? object : [object]).forEach((hand) => {
+            this.db.update({ id: hand.id }, hand, { upsert: true });
+        });
     }
 }
 

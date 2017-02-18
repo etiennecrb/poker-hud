@@ -44,8 +44,7 @@ export default class HandHistoryManager {
     private watch(): void {
         const parseFileIfHandHistoryWasUpdated = (eventType, filename) => {
             if (eventType === 'change' && filename.indexOf('.txt') > -1 && filename.indexOf('summary') === -1) {
-                this.parseFile(filename)
-                    .subscribe((hand) => HudManager.setLastHand(hand));
+                this.parseFile(filename).then((hand) => HudManager.setLastHand(hand));
                 Config.setLastSync(this.room);
             }
         };
@@ -53,11 +52,11 @@ export default class HandHistoryManager {
         this.watcher = fs.watch(this.pathToFolder, watcherCallback);
     }
 
-    private parseFile(filename: string): Rx.Observable<Hand> {
-        const handStream = Parser.parseFile(this.room, path.join(this.pathToFolder, filename));
-        handStream.subscribe((hand) => {
-            HandHistoryDatabase.upsert(hand);
-        });
-        return handStream.last();
+    private parseFile(filename: string): Promise<Hand> {
+        return Parser.parseFile(this.room, path.join(this.pathToFolder, filename))
+            .then((hands) => {
+                HandHistoryDatabase.upsert(hands);
+                return _.last(hands);
+            });
     }
 };

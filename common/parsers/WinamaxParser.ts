@@ -13,15 +13,16 @@ import Round from '../models/Round';
 
 class WinamaxParser implements RoomParser {
 
-    parse(rl: readline.ReadLine): Rx.Observable<Hand> {
+    parse(rl: readline.ReadLine): Promise<Hand[]> {
+        const hands = [];
         let state = 0;
         let hand = void 0;
 
-        return Rx.Observable.create((subscriber) => {
+        return new Promise((resolve) => {
             rl.on('line', (line) => {
                 if (WinamaxParser.goToNextState[state](line)) {
                     if (WinamaxParser.endOfHand(state, line)) {
-                        subscriber.next(hand);
+                        hands.push(hand);
                         state = 0;
                     } else {
                         do {
@@ -40,7 +41,9 @@ class WinamaxParser implements RoomParser {
                 }
             });
 
-            rl.on('close', () => subscriber.complete());
+            rl.on('close', () => {
+                resolve(hands);
+            });
         });
     }
 

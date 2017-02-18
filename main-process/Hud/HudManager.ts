@@ -17,9 +17,12 @@ class HudManager {
         this.lastHand = lastHand;
 
         HandHistoryDatabase.find({ playerNames: lastHand.playerNames })
-            .subscribe((hands) => {
+            .subscribe((rawHands) => {
+                const hands = rawHands.map((rawHand) => {
+                    return new Hand(rawHand.id, new Date(rawHand.date), rawHand.playerBySeat, rawHand.playerNames,
+                        rawHand.buttonSeat, rawHand.rounds)
+                });
                 const metricsByPlayer = MetricsEngine.compute(hands, _.values(lastHand.playerBySeat));
-                console.log(metricsByPlayer);
                 this.updateHudWindows(this.lastHand.playerBySeat, metricsByPlayer);
             });
     }
@@ -70,10 +73,12 @@ class HudManager {
         });
 
         hudWindow.loadURL(url.format({
-            pathname: path.join(__dirname, 'app-hud/index.html'),
+            pathname: path.join(__dirname, '../../../app-hud/index.html'),
             protocol: 'file:',
             slashes: true
         }));
+
+        // hudWindow.webContents.openDevTools();
 
         return hudWindow;
     }
