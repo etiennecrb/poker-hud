@@ -1,4 +1,2 @@
-<input #path type="file" webkitdirectory directory>
-<button (click)="path.click()">Hand history folder</button>
-<button (click)="changeFolder(path.files[0]?.path)">Set</button>
-{{ value?.pathToFolder }}
+<input #path type="file" (change)="changeFolder(path.files[0]?.path)" webkitdirectory directory>
+<button md-fab (click)="path.click()" title="{{ value?.pathToFolder }}"><md-icon>folder</md-icon></button>
