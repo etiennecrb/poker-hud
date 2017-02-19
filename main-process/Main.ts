@@ -24,9 +24,11 @@ class Main {
                 this.createMainWindow();
             })
             .on('handHistoryFoldersChanged', (appConfig) => {
-                HandHistoryDatabase.empty();
-                this.handHistoryManagers.forEach((manager) => manager.stop());
-                this.handHistoryManagers = Main.createHandHistoryManagers(appConfig);
+                HandHistoryDatabase.empty()
+                    .then(() => {
+                        this.handHistoryManagers.forEach((manager) => manager.stop());
+                        this.handHistoryManagers = Main.createHandHistoryManagers(appConfig);
+                    });
             });
     }
 

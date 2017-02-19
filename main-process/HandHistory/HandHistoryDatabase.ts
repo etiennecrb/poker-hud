@@ -14,8 +14,10 @@ class HandHistoryDatabase {
         this.db.ensureIndex({ fieldName: 'id', unique: true });
     }
 
-    empty(): void {
-        this.db.remove({});
+    empty(): Promise<{}> {
+        return new Promise((resolve) => {
+            this.db.remove({}, {multi: true}, () => resolve());
+        });
     }
 
     find(params: {playerNames: string[]}): Rx.Observable<Hand[]> {
