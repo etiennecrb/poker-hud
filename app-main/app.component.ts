@@ -3,7 +3,8 @@ declare const reactiveIpcRenderer: any;
 
 @Component({
     selector: 'my-app',
-    template: '<hand-history-config></hand-history-config>'
+    templateUrl: 'app.component.html' +
+    ''
 })
 export class AppComponent {
     constructor() {

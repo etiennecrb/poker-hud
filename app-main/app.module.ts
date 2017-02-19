@@ -2,13 +2,13 @@ import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent }   from './app.component';
-import { HandHistoryConfigComponent }   from './hand-history-config/hand-history-config.component';
+import { HandHistoryFolderComponent }   from './components/hand-history-folder/hand-history-folder.component';
 
 @NgModule({
   imports:      [ BrowserModule ],
   declarations: [
       AppComponent,
-      HandHistoryConfigComponent
+      HandHistoryFolderComponent
   ],
   bootstrap:    [ AppComponent ]
 })

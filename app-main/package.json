@@ -1,0 +1,24 @@
+{
+  "name": "poker-hud",
+  "dependencies": {
+    "@angular/common": "~2.2.0",
+    "@angular/compiler": "~2.2.0",
+    "@angular/core": "~2.2.0",
+    "@angular/forms": "~2.2.0",
+    "@angular/http": "~2.2.0",
+    "@angular/platform-browser": "~2.2.0",
+    "@angular/platform-browser-dynamic": "~2.2.0",
+    "@angular/router": "~3.2.0",
+    "@angular/upgrade": "~2.2.0",
+    "@types/electron": "^1.4.31",
+    "@types/lodash": "^4.14.41",
+    "@types/lodash.curry": "^4.1.0",
+    "@types/mkdirp": "^0.3.29",
+    "@types/nedb": "0.0.31",
+    "angular-in-memory-web-api": "~0.1.15",
+    "lodash": "^4.17.4",
+    "rxjs": "5.0.0-beta.12",
+    "systemjs": "0.19.39",
+    "zone.js": "^0.6.25"
+  }
+}

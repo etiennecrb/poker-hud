@@ -1,0 +1,7 @@
+<select #room>
+  <option value="winamax" selected>Winamax</option>
+</select>
+<input #path type="file" webkitdirectory directory style="display: none;">
+<button (click)="path.click()">Hand history folder</button>
+<button (click)="changeFolder(room.value, path.files[0]?.path)">Add</button>
+

@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
-import * as _ from 'lodash';
+import * as url from 'url';
+import * as path from 'path';
 
 import Config  from './Config/Config';
 import ConfigObject from './Config/ConfigObject';
@@ -11,8 +12,8 @@ class Main {
 
     run(): void {
         // Register event listeners
-        app.on('ready', this.onReady);
-        app.on('window-all-closed', Main.onWindowAllClosed);
+        app.on('ready', () => this.onReady());
+        app.on('window-all-closed', () => Main.onWindowAllClosed());
     }
 
     private onReady(): void {
@@ -38,11 +39,15 @@ class Main {
         this.mainWindow = new BrowserWindow({width: 800, height: 600});
 
         // and load the index.html of the app.
-        this.mainWindow.loadURL(`file://${__dirname}/app-main/index.html`);
+        this.mainWindow.loadURL(url.format({
+            pathname: path.join(__dirname, '../../app-main/index.html'),
+            protocol: 'file:',
+            slashes: true
+        }));
         this.mainWindow.webContents.openDevTools();
 
         // Emitted when the window is closed.
-        this.mainWindow.on('closed', function () {
+        this.mainWindow.on('closed', () => {
             // Dereference the window object, usually you would store windows
             // in an array if your app supports multi windows, this is the time
             // when you should delete the corresponding element.
