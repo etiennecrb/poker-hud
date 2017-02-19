@@ -1,2 +1,3 @@
-Hello, World!
-<hand-history-folder></hand-history-folder>
+<hand-history-folder [value]="handHistoryFolder"
+                     (onChange)="handleHandHistoryFolderChange($event)">
+</hand-history-folder>

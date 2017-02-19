@@ -12,6 +12,7 @@
     <!-- 2. Configure SystemJS -->
     <script src="../systemjs.config.js"></script>
     <script>
+      const ipcRenderer = require('electron').ipcRenderer;
       System.import('app').catch(function(err){ console.error(err); });
     </script>
 </head>

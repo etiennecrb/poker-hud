@@ -26,7 +26,7 @@ export default class HandHistoryManager {
                 );
                 return Rx.Observable.concat(...array);
             })
-            .filter(([filename, mtime]) => mtime > lastSync.getTime())
+            .filter(([filename, mtime]) => !lastSync || mtime > lastSync.getTime())
             .subscribe(([filename, stats]) => this.parseFile(filename.toString()));
 
         Config.setLastSync(this.room);

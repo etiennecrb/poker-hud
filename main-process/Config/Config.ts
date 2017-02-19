@@ -1,7 +1,7 @@
+import { ipcMain } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as mkdirp from 'mkdirp';
-import * as Rx from 'rxjs';
 import * as _ from 'lodash';
 import * as EventEmitter from 'events';
 
@@ -16,6 +16,15 @@ class Config extends EventEmitter {
 
     constructor() {
         super();
+
+        ipcMain.on('config/get', (event) => {
+            event.sender.send('config/get', this.config);
+        });
+
+        ipcMain.on('config/set-hand-history-folders', (event, folders) => {
+            this.setHandHistoryFolders(folders);
+            event.sender.send('config/set-hand-history-folders', this.config);
+        });
     }
 
     load(): Config {

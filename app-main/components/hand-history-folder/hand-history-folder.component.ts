@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import {Component, Input, Output, EventEmitter} from '@angular/core';
+import HandHistoryFolder from "../../../main-process/Config/HandHistoryFolder";
 
 @Component({
     selector: 'hand-history-folder',
     templateUrl: 'components/hand-history-folder/hand-history-folder.component.html'
 })
 export class HandHistoryFolderComponent {
-    handHistoryFolder: {room: string, path: string};
+    @Input() value: HandHistoryFolder;
+    @Output() onChange = new EventEmitter();
 
-    constructor() {}
-
-    changeFolder(room:string, path:string): void {
+    changeFolder(path:string): void {
+        this.onChange.emit({room: 'winamax', pathToFolder: path});
     }
 }

@@ -1,10 +1,11 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as url from 'url';
 import * as path from 'path';
 
 import Config  from './Config/Config';
 import ConfigObject from './Config/ConfigObject';
 import HandHistoryManager from './HandHistory/HandHistoryManager';
+import HandHistoryDatabase from './HandHistory/HandHistoryDatabase';
 
 class Main {
     private mainWindow: Electron.BrowserWindow;
@@ -22,7 +23,8 @@ class Main {
                 this.handHistoryManagers = Main.createHandHistoryManagers(appConfig);
                 this.createMainWindow();
             })
-            .on('handHistoryFoldersChange', (appConfig) => {
+            .on('handHistoryFoldersChanged', (appConfig) => {
+                HandHistoryDatabase.empty();
                 this.handHistoryManagers.forEach((manager) => manager.stop());
                 this.handHistoryManagers = Main.createHandHistoryManagers(appConfig);
             });

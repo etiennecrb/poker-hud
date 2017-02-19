@@ -14,6 +14,10 @@ class HandHistoryDatabase {
         this.db.ensureIndex({ fieldName: 'id', unique: true });
     }
 
+    empty(): void {
+        this.db.remove({});
+    }
+
     find(params: {playerNames: string[]}): Rx.Observable<Hand[]> {
         return Rx.Observable.create((subscriber) => {
             this.db.find({ playerNames: { $in: params.playerNames } }, (err, docs) => {
@@ -30,6 +34,7 @@ class HandHistoryDatabase {
         (Array.isArray(object) ? object : [object]).forEach((hand) => {
             this.db.update({ id: hand.id }, hand, { upsert: true });
         });
+        this.db.count({}, (err, count) => console.log(count));
     }
 }
 
