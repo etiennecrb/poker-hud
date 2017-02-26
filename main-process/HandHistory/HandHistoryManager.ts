@@ -43,7 +43,7 @@ export default class HandHistoryManager {
 
     private watch(): void {
         const parseFileIfHandHistoryWasUpdated = (eventType, filename) => {
-            if (eventType === 'change' && filename.indexOf('.txt') > -1 && filename.indexOf('summary') === -1) {
+            if (filename.indexOf('.txt') > -1 && filename.indexOf('summary') === -1) {
                 this.parseFile(filename).then((hand) => HudManager.setLastHand(hand));
                 Config.setLastSync(this.room);
             }

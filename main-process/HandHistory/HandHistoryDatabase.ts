@@ -36,7 +36,6 @@ class HandHistoryDatabase {
         (Array.isArray(object) ? object : [object]).forEach((hand) => {
             this.db.update({ id: hand.id }, hand, { upsert: true });
         });
-        this.db.count({}, (err, count) => console.log(count));
     }
 }
 
