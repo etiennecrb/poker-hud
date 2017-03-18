@@ -3,10 +3,10 @@ import * as url from 'url';
 import * as path from 'path';
 import * as _ from 'lodash';
 
-import Hand from '../../common/models/Hand';
-import Player from '../../common/models/Player';
-import MetricsObject from '../../common/metrics/MetricsObject';
-import MetricsEngine from '../../common/metrics/MetricsEngine';
+import Hand from '../../shared/models/Hand';
+import Player from '../../shared/models/Player';
+import MetricsObject from '../../shared/metrics/MetricsObject';
+import MetricsEngine from '../../shared/metrics/MetricsEngine';
 import HandHistoryDatabase from '../HandHistory/HandHistoryDatabase';
 
 class HudManager {
@@ -73,7 +73,7 @@ class HudManager {
         });
 
         hudWindow.loadURL(url.format({
-            pathname: path.join(__dirname, '../../../app-hud/index.html'),
+            pathname: path.join(__dirname, 'app-hud.html'),
             protocol: 'file:',
             slashes: true
         }));

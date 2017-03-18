@@ -70,18 +70,6 @@ class WinamaxParser implements RoomParser {
         8: (line) => _.includes(line, '***')
     };
 
-    private static lineParser = {
-        0: _.noop,
-        1: WinamaxParser.parseHandLine,
-        2: WinamaxParser.parseButtonSeat,
-        3: WinamaxParser.parsePlayerBySeat,
-        4: WinamaxParser.parseRoundLine,
-        5: WinamaxParser.parseActionLine,
-        6: _.identity,
-        7: WinamaxParser.parseRoundLine,
-        8: WinamaxParser.parseActionLine
-    };
-
     private static skipLine = {
         0: _.constant(false),
         1: _.constant(false),
@@ -204,6 +192,18 @@ class WinamaxParser implements RoomParser {
         }
         return line.slice(line.indexOf(prefix) + prefix.length, line.indexOf(suffix));
     }
+
+    private static lineParser = {
+        0: _.noop,
+        1: WinamaxParser.parseHandLine,
+        2: WinamaxParser.parseButtonSeat,
+        3: WinamaxParser.parsePlayerBySeat,
+        4: WinamaxParser.parseRoundLine,
+        5: WinamaxParser.parseActionLine,
+        6: _.identity,
+        7: WinamaxParser.parseRoundLine,
+        8: WinamaxParser.parseActionLine
+    };
 }
 
 export default new WinamaxParser();

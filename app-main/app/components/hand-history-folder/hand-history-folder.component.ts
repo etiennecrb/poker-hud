@@ -1,10 +1,10 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
-import HandHistoryFolder from "../../../main-process/Config/HandHistoryFolder";
+import HandHistoryFolder from "../../../../electron/Config/HandHistoryFolder";
 
 @Component({
     selector: 'hand-history-folder',
-    templateUrl: 'components/hand-history-folder/hand-history-folder.component.html',
-    styleUrls: ['components/hand-history-folder/hand-history-folder.component.css']
+    templateUrl: 'hand-history-folder.component.html',
+    styleUrls: ['hand-history-folder.component.css']
 })
 export class HandHistoryFolderComponent {
     @Input() value: HandHistoryFolder;

@@ -19,11 +19,11 @@ class Main {
 
     private onReady(): void {
         Config.load()
-            .on('ready', (appConfig) => {
+            .on('ready', (appConfig: ConfigObject) => {
                 this.handHistoryManagers = Main.createHandHistoryManagers(appConfig);
                 this.createMainWindow();
             })
-            .on('handHistoryFoldersChanged', (appConfig) => {
+            .on('handHistoryFoldersChanged', (appConfig: ConfigObject) => {
                 HandHistoryDatabase.empty()
                     .then(() => {
                         this.handHistoryManagers.forEach((manager) => manager.stop());
@@ -44,7 +44,7 @@ class Main {
 
         // and load the index.html of the app.
         this.mainWindow.loadURL(url.format({
-            pathname: path.join(__dirname, '../../app-main/index.html'),
+            pathname: path.join(__dirname, 'app-main.html'),
             protocol: 'file:',
             slashes: true
         }));

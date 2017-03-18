@@ -12,7 +12,6 @@ import Utils from '../Utils/Utils';
 class Config extends EventEmitter {
     private config: ConfigObject;
     private static version: number = 0.1;
-    private static configPath: string = Config.getConfigPath();
 
     constructor() {
         super();
@@ -32,7 +31,7 @@ class Config extends EventEmitter {
             if (err) {
                 throw err;
             }
-            fs.readFile(Config.configPath, 'utf-8', (err, data) => {
+            fs.readFile(Config.getConfigPath(), 'utf-8', (err, data) => {
                 const config = !err ? Config.parse(data) : null;
                 if (config && config.version == Config.version) {
                     this.config = config;
@@ -65,7 +64,7 @@ class Config extends EventEmitter {
     }
 
     private save(): Config {
-        fs.writeFile(Config.configPath, JSON.stringify(this.config), (err) => {
+        fs.writeFile(Config.getConfigPath(), JSON.stringify(this.config), (err) => {
             if (err) {
                 throw err;
             }
@@ -73,7 +72,7 @@ class Config extends EventEmitter {
         return this;
     }
 
-    private static parse(data): ConfigObject {
+    private static parse(data: string): ConfigObject {
         return JSON.parse(data, (key, value) => {
             if (key === 'lastSync') {
                 const time = Date.parse(value);

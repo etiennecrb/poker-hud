@@ -4,9 +4,9 @@ import * as _ from 'lodash';
 import * as Rx from 'rxjs';
 
 import Config from '../Config/Config';
-import Parser from '../../common/parsers/Parser';
+import Parser from '../../shared/parsers/Parser';
 import HandHistoryDatabase from './HandHistoryDatabase';
-import Hand from '../../common/models/Hand';
+import Hand from '../../shared/models/Hand';
 import HudManager from '../Hud/HudManager';
 
 export default class HandHistoryManager {
@@ -42,7 +42,7 @@ export default class HandHistoryManager {
     }
 
     private watch(): void {
-        const parseFileIfHandHistoryWasUpdated = (eventType, filename) => {
+        const parseFileIfHandHistoryWasUpdated = (eventType: string, filename: string) => {
             if (filename.indexOf('.txt') > -1 && filename.indexOf('summary') === -1) {
                 this.parseFile(filename).then((hand) => HudManager.setLastHand(hand));
                 Config.setLastSync(this.room);

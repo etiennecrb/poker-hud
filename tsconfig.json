@@ -1,17 +1,13 @@
 {
     "compilerOptions": {
-        "target": "ES6",
+        "target": "es2015",
         "module": "commonjs",
         "moduleResolution": "node",
         "sourceMap": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "removeComments": false,
+        "lib": ["es2015", "dom"],
         "noImplicitAny": false,
-        "outDir": "dist"
-    },
-    "exclude": [
-        "node_modules",
-        "app-main/node_modules"
-    ]
+        "suppressImplicitAnyIndexErrors": true
+    }
 }

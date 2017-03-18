@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { ElectronService } from 'ngx-electron';
+
 import { ConfigService } from './common/config.service';
-import HandHistoryFolder from "../main-process/Config/HandHistoryFolder";
+import HandHistoryFolder from '../../electron/Config/HandHistoryFolder';
+
+import '../assets/styles.css';
 
 @Component({
-    selector: 'my-app',
+    selector: 'app-root',
     templateUrl: 'app.component.html',
     providers: [ ConfigService ]
 })

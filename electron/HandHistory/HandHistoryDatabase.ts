@@ -3,7 +3,7 @@ import * as Datastore from 'nedb';
 import * as Rx from 'rxjs';
 
 import Utils from '../Utils/Utils';
-import Hand from '../../common/models/Hand';
+import Hand from '../../shared/models/Hand';
 
 class HandHistoryDatabase {
     private db: Datastore;
@@ -21,8 +21,8 @@ class HandHistoryDatabase {
     }
 
     find(params: {playerNames: string[]}): Rx.Observable<Hand[]> {
-        return Rx.Observable.create((subscriber) => {
-            this.db.find({ playerNames: { $in: params.playerNames } }, (err, docs) => {
+        return Rx.Observable.create((subscriber: Rx.Subscriber<Hand[]>) => {
+            this.db.find({ playerNames: { $in: params.playerNames } }, (err: any, docs: Hand[]) => {
                 if (err) {
                     throw err;
                 }
