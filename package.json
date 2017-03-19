@@ -13,6 +13,7 @@
     "@angular/platform-browser": "~2.4.0",
     "@angular/platform-browser-dynamic": "~2.4.0",
     "@angular/router": "~3.4.0",
+    "chokidar": "^1.6.1",
     "core-js": "^2.4.1",
     "lodash": "^4.17.2",
     "mkdirp": "^0.5.1",
@@ -24,6 +25,7 @@
     "zone.js": "^0.7.4"
   },
   "devDependencies": {
+    "@types/chokidar": "^1.4.31",
     "@types/electron": "^1.4.33",
     "@types/lodash": "^4.14.41",
     "@types/mkdirp": "^0.3.29",
