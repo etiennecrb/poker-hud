@@ -54,7 +54,7 @@
     "electron-build": "webpack --config config/webpack.electron.js",
     "electron-run": "electron ./dist/main.js",
     "prepackage": "rm -f dist/*.map && cp package.json dist/",
-    "package": "electron-packager dist --out build/",
+    "package": "electron-packager dist --all --out build/",
     "start": "npm run clean && npm run app-build && npm run electron-build && npm run electron-run | npm run app-watch",
     "test": "ts-node node_modules/tap/bin/run ./shared/**/tests/*.ts",
     "build": "npm run clean && npm run app-build && npm run electron-build && npm run package"

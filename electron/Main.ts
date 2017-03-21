@@ -14,7 +14,6 @@ class Main {
     run(): void {
         // Register event listeners
         app.on('ready', () => this.onReady());
-        app.on('window-all-closed', () => Main.onWindowAllClosed());
     }
 
     private onReady(): void {
@@ -51,12 +50,7 @@ class Main {
         this.mainWindow.webContents.openDevTools();
 
         // Emitted when the window is closed.
-        this.mainWindow.on('closed', () => {
-            // Dereference the window object, usually you would store windows
-            // in an array if your app supports multi windows, this is the time
-            // when you should delete the corresponding element.
-            this.mainWindow = null;
-        });
+        this.mainWindow.on('closed', () => Main.onWindowAllClosed());
     }
 
     private static onWindowAllClosed(): void {
