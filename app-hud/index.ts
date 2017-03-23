@@ -2,15 +2,15 @@ import './index.css'
 import './fonts.css'
 
 import { ipcRenderer } from 'electron';
-import * as _  from 'lodash';
+import * as _ from 'lodash';
 
 import MetricsObject from '../shared/metrics/MetricsObject';
 
 let playerName: string = void 0;
 let metrics: {} = void 0;
-let showAltMetrics = false;
+let metricsIndex = 1;
 
-setVisibleMetrics(showAltMetrics);
+setVisibleMetrics(metricsIndex);
 
 ipcRenderer.on('update-data', (event, data) => {
     playerName = data.playerName;
@@ -18,10 +18,11 @@ ipcRenderer.on('update-data', (event, data) => {
     render(playerName, metrics);
 });
 
-[].forEach.call(document.getElementsByClassName('content'), function (el: Element) {
-    el.addEventListener('click', () => {
-        showAltMetrics = !showAltMetrics;
-        setVisibleMetrics(showAltMetrics);
+[1, 2, 3].forEach((index) => {
+    const element = document.getElementById('metrics-' + index)
+    element.addEventListener('click', () => {
+        metricsIndex = index === 3 ? 1 : index + 1;
+        setVisibleMetrics(metricsIndex);
     });
 });
 
@@ -30,11 +31,18 @@ function render(playerName: string, metrics: {}) {
     ['count', 'vpip', 'pfr', 'af', 'cbet', 'cbet_fold'].forEach((metric) => {
         document.getElementById('metric-' + metric).firstChild.nodeValue = metrics[metric].value;
     });
+    ['flop', 'turn', 'river'].forEach((roundKey) => {
+        ['opp', 'raise', 'call', 'check', 'fold'].forEach((actionKey) => {
+            document.getElementById('metric-' + roundKey + '-' + actionKey).firstChild.nodeValue = metrics[roundKey][actionKey].value;
+        });
+    });
 }
 
-function setVisibleMetrics(showAltMetrics: boolean) {
-    document.getElementById('main-metrics').style.display = showAltMetrics ? 'none' : null;
-    document.getElementById('alt-metrics').style.display = showAltMetrics ? null : 'none';
+function setVisibleMetrics(metricsIndex: number) {
+    document.getElementById('metrics-1').style.display = metricsIndex === 1 ? null : 'none';
+    document.getElementById('metrics-2').style.display = metricsIndex === 2 ? null : 'none';
+    document.getElementById('metrics-3').style.display = metricsIndex === 3 ? null : 'none';
+    document.getElementById('header').style.display = metricsIndex === 3 ? 'none' : null;
 }
 
 function buildMetrics(metrics: MetricsObject) {
@@ -45,23 +53,86 @@ function buildMetrics(metrics: MetricsObject) {
         },
         vpip: {
             name: 'vpip',
-            value: _.isNumber(metrics.vpip) ? '' + Math.round(100 * metrics.vpip) + '%' : 'n/a'
+            value: _.isNumber(metrics.vpip) ? '' + Math.round(100 * metrics.vpip) + '%' : 'NA'
         },
         pfr: {
             name: 'pfr',
-            value: _.isNumber(metrics.pfr) ? '' + Math.round(100 * metrics.pfr) + '%' : 'n/a'
+            value: _.isNumber(metrics.pfr) ? '' + Math.round(100 * metrics.pfr) + '%' : 'NA'
         },
         af: {
             name: 'af',
-            value: _.isNumber(metrics.af) ? Math.round(10 * metrics.af) / 10 : 'n/a'
+            value: _.isNumber(metrics.af) ? Math.round(10 * metrics.af) / 10 : 'NA'
         },
         cbet: {
             name: 'cbet',
-            value: _.isNumber(metrics.cbet_opp) ? '' + Math.round(100 * metrics.cbet) + '% (' + metrics.cbet_opp + ')' : 'n/a'
+            value: _.isNumber(metrics.cbet_opp) ? '' + Math.round(100 * metrics.cbet) + '% (' + metrics.cbet_opp + ')' : 'NA'
         },
         cbet_fold: {
             name: 'cbet_fold',
-            value: _.isNumber(metrics.cbet_fold_opp) ? '' + Math.round(100 * metrics.cbet_fold) + '% (' + metrics.cbet_fold_opp + ')' : 'n/a'
+            value: _.isNumber(metrics.cbet_fold_opp) ? '' + Math.round(100 * metrics.cbet_fold) + '% (' + metrics.cbet_fold_opp + ')' : 'NA'
+        },
+        flop: {
+            opp: {
+                value: metrics.flop.opp
+            },
+            raise: {
+                name: 'raise',
+                value: metrics.flop.opp > 0 ? Math.round(100 * metrics.flop.raise) : '-'
+            },
+            call: {
+                name: 'call',
+                value: metrics.flop.opp > 0 ? Math.round(100 * metrics.flop.call) : '-'
+            },
+            check: {
+                name: 'check',
+                value: metrics.flop.opp > 0 ? Math.round(100 * metrics.flop.check) : '-'
+            },
+            fold: {
+                name: 'fold',
+                value: metrics.flop.opp > 0 ? Math.round(100 * metrics.flop.fold) : '-'
+            }
+        },
+        turn: {
+            opp: {
+                value: metrics.turn.opp
+            },
+            raise: {
+                name: 'raise',
+                value: metrics.turn.opp > 0 ? Math.round(100 * metrics.turn.raise) : '-'
+            },
+            call: {
+                name: 'call',
+                value: metrics.turn.opp > 0 ? Math.round(100 * metrics.turn.call) : '-'
+            },
+            check: {
+                name: 'check',
+                value: metrics.turn.opp > 0 ? Math.round(100 * metrics.turn.check) : '-'
+            },
+            fold: {
+                name: 'fold',
+                value: metrics.turn.opp > 0 ? Math.round(100 * metrics.turn.fold) : '-'
+            }
+        },
+        river: {
+            opp: {
+                value: metrics.river.opp
+            },
+            raise: {
+                name: 'raise',
+                value: metrics.river.opp > 0 ? Math.round(100 * metrics.river.raise) : '-'
+            },
+            call: {
+                name: 'call',
+                value: metrics.river.opp > 0 ? Math.round(100 * metrics.river.call) : '-'
+            },
+            check: {
+                name: 'check',
+                value: metrics.river.opp > 0 ? Math.round(100 * metrics.river.check) : '-'
+            },
+            fold: {
+                name: 'fold',
+                value: metrics.river.opp > 0 ? Math.round(100 * metrics.river.fold) : '-'
+            }
         }
     };
 

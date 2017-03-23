@@ -9,18 +9,54 @@
 
 <body>
     <div class="main">
-        <div class="header">
+        <div id="header">
             <div id="player-name" title="Player"> </div>
-            <div id="metric-count" title="Hand count"> </div>
+            <div id="metric-count" class="metric--count" title="Hand count"> </div>
         </div>
-        <div id="main-metrics" class="content">
+        <div id="metrics-1" class="content">
             <div id="metric-vpip" title="VP$IP" class="metric"> </div>
             <div id="metric-pfr" title="PFR" class="metric"> </div>
             <div id="metric-af" title="AF" class="metric"> </div>
         </div>
-        <div id="alt-metrics" class="content">
+        <div id="metrics-2" class="content">
             <div id="metric-cbet" title="CBet" class="metric"> </div>
             <div id="metric-cbet_fold" title="Fold to CBet" class="metric"> </div>
+        </div>
+        <div id="metrics-3" class="content content--vertical">
+            <div class="content">
+                <div class="metric metric--cell metric--title">%</div>
+                <div class="metric metric--cell metric--title">Raise</div>
+                <div class="metric metric--cell metric--title">Call</div>
+                <div class="metric metric--cell metric--title">Check</div>
+                <div class="metric metric--cell metric--title">Fold</div>
+            </div>
+            <div id="metric-flop" class="content">
+                <div class="metric metric--cell metric--title">Flop
+                    <span id="metric-flop-opp" class="metric--count"> </span>
+                </div>
+                <div class="metric metric--cell" id="metric-flop-raise"> </div>
+                <div class="metric metric--cell" id="metric-flop-call"> </div>
+                <div class="metric metric--cell" id="metric-flop-check"> </div>
+                <div class="metric metric--cell" id="metric-flop-fold"> </div>
+            </div>
+            <div id="metric-turn" class="content">
+                <div class="metric metric--cell metric--title">Turn
+                    <span id="metric-turn-opp" class="metric--count"> </span>
+                </div>
+                <div class="metric metric--cell" id="metric-turn-raise"> </div>
+                <div class="metric metric--cell" id="metric-turn-call"> </div>
+                <div class="metric metric--cell" id="metric-turn-check"> </div>
+                <div class="metric metric--cell" id="metric-turn-fold"> </div>
+            </div>
+            <div id="metric-river" class="content">
+                <div class="metric metric--cell metric--title">River
+                    <span id="metric-river-opp" class="metric--count"> </span>
+                </div>
+                <div class="metric metric--cell" id="metric-river-raise"> </div>
+                <div class="metric metric--cell" id="metric-river-call"> </div>
+                <div class="metric metric--cell" id="metric-river-check"> </div>
+                <div class="metric metric--cell" id="metric-river-fold"> </div>
+            </div>
         </div>
     </div>
 </body>

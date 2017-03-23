@@ -5,9 +5,10 @@ import MetricsObject from "./MetricsObject";
 import ActionType from "../models/ActionType";
 
 class MetricsEngine {
-    private static stats: string[] = ['computeCount', 'computeVpip', 'computeAf', 'computeCbet'];
+    private static stats: string[] = ['computeCount', 'computeVpip', 'computeAf',
+        'computeCbet', 'computePostFlopStats'];
 
-    static compute(hands: Hand[], players: Player[]): {[s: string]: MetricsObject} {
+    static compute(hands: Hand[], players: Player[]): { [s: string]: MetricsObject } {
         const playerNames = _.map(players, 'name');
         const results = {};
         hands.forEach((hand) => {
@@ -17,10 +18,23 @@ class MetricsEngine {
                         results[playerName] = {};
                     }
                     _(incrementObject).forEach((value, metric) => {
-                        if (!results[playerName][metric]) {
-                            results[playerName][metric] = 0;
+                        if (_.isPlainObject(value)) {
+                            // Handle stats by round
+                            if (!results[playerName][metric]) {
+                                results[playerName][metric] = { opp: 0 };
+                            }
+                            _(value).forEach((actionValue, action) => {
+                                if (!results[playerName][metric][action]) {
+                                    results[playerName][metric][action] = 0;
+                                }
+                                results[playerName][metric][action] += actionValue;
+                            });
+                        } else {
+                            if (!results[playerName][metric]) {
+                                results[playerName][metric] = 0;
+                            }
+                            results[playerName][metric] += value;
                         }
-                        results[playerName][metric] += value;
                     });
                 });
             });
@@ -42,7 +56,28 @@ class MetricsEngine {
             cbet: null,
             cbet_opp: null,
             cbet_fold: null,
-            cbet_fold_opp: null
+            cbet_fold_opp: null,
+            flop: {
+                opp: 0,
+                raise: null,
+                call: null,
+                check: null,
+                fold: null
+            },
+            turn: {
+                opp: 0,
+                raise: null,
+                call: null,
+                check: null,
+                fold: null
+            },
+            river: {
+                opp: 0,
+                raise: null,
+                call: null,
+                check: null,
+                fold: null
+            }
         };
 
         const count = _.get(metrics, 'count', 0);
@@ -78,27 +113,37 @@ class MetricsEngine {
             metricsObject['cbet_fold_opp'] = cbet_fold_p + cbet_fold_n;
         }
 
+        ['flop', 'turn', 'river'].forEach((roundKey) => {
+            const opp = _(metrics[roundKey]).values().sum();
+            metricsObject[roundKey].opp = opp;
+            if (opp > 0) {
+                ['raise', 'call', 'check', 'fold'].forEach((actionKey) => {
+                    metricsObject[roundKey][actionKey] = metrics[roundKey][actionKey] / opp;
+                });
+            }
+        });
+
         return metricsObject;
     }
 
-    private static computeCount(hand: Hand): {[s: string]: {count: number}} {
+    private static computeCount(hand: Hand): { [s: string]: { count: number } } {
         let result = {};
         _(hand.playerBySeat).forEach((player) => {
-            result[player.name] = {count: 1};
+            result[player.name] = { count: 1 };
         });
         return result;
     }
 
-    private static computeVpip(hand: Hand): {[s: string]: {vpip: number, vnpip: number, pfr: number}} {
+    private static computeVpip(hand: Hand): { [s: string]: { vpip: number, vnpip: number, pfr: number } } {
         const bbPlayer = hand.getBigBlindPlayer();
         let result = {};
         hand.getPreFlop().actions.forEach(function (action) {
             if (isActionPfr(action) && !result[action.player.name]) {
-                result[action.player.name] = {pfr: 1, vpip: 1};
+                result[action.player.name] = { pfr: 1, vpip: 1 };
             } else if (isActionVpip(bbPlayer, action) && !result[action.player.name]) {
-                result[action.player.name] = {vpip: 1};
+                result[action.player.name] = { vpip: 1 };
             } else if (isActionVnpip(action) && !result[action.player.name]) {
-                result[action.player.name] = {vnpip: 1};
+                result[action.player.name] = { vnpip: 1 };
             }
         });
         return result;
@@ -120,7 +165,7 @@ class MetricsEngine {
     }
 
     private static computeAf(hand: Hand):
-    {[s: string]: {af_pre_calls: number, af_pre_bets: number, af_post_calls: number, af_post_bets: number}} {
+        { [s: string]: { af_pre_calls: number, af_pre_bets: number, af_post_calls: number, af_post_bets: number } } {
         let result = {};
         hand.rounds[1].actions.forEach((action) => {
             if (action.type === ActionType.Call) {
@@ -150,11 +195,11 @@ class MetricsEngine {
     }
 
     private static computeCbet(hand: Hand):
-    {[s: string]: {cbet_p: number, cbet_n: number, cbet_fold_p: number, cbet_fold_n: number}} {
+        { [s: string]: { cbet_p: number, cbet_n: number, cbet_fold_p: number, cbet_fold_n: number } } {
         let result = {};
-        const lastPreFlopRaise = _(hand.getPreFlop().actions).filter({type: ActionType.Raise}).last();
+        const lastPreFlopRaise = _(hand.getPreFlop().actions).filter({ type: ActionType.Raise }).last();
         const flop = hand.getFlop();
-        
+
         if (lastPreFlopRaise && flop && flop.actions.length) {
             let cbetOpportunity = true;
             let i = 0;
@@ -165,22 +210,59 @@ class MetricsEngine {
                 i++;
             }
             if (cbetOpportunity && flop.actions[i] && flop.actions[i].type !== ActionType.Collect) {
-                if (flop.actions[i].type === ActionType.Bet ) {
-                    result[lastPreFlopRaise.player.name] = {cbet_p: 1};
-                    let j = i+1;
+                if (flop.actions[i].type === ActionType.Bet) {
+                    result[lastPreFlopRaise.player.name] = { cbet_p: 1 };
+                    let j = i + 1;
                     while (j < flop.actions.length && flop.actions[j].player.name !== lastPreFlopRaise.player.name) {
                         if (flop.actions[j].type === ActionType.Fold) {
-                            result[flop.actions[j].player.name] = {cbet_fold_p: 1};
+                            result[flop.actions[j].player.name] = { cbet_fold_p: 1 };
                         } else {
-                            result[flop.actions[j].player.name] = {cbet_fold_n: 1};
+                            result[flop.actions[j].player.name] = { cbet_fold_n: 1 };
                         }
                         j++;
                     }
                 } else {
-                    result[lastPreFlopRaise.player.name] = {cbet_n: 1};
+                    result[lastPreFlopRaise.player.name] = { cbet_n: 1 };
                 }
             }
         }
+        return result;
+    }
+
+    private static computePostFlopStats(hand: Hand): {
+        [s: string]: {
+            flop: { raise: number, call: number, check: number, fold: number },
+            turn: { raise: number, call: number, check: number, fold: number },
+            river: { raise: number, call: number, check: number, fold: number },
+        }
+    } {
+        const metrics = {
+            flop: { raise: 0, call: 0, check: 0, fold: 0 },
+            turn: { raise: 0, call: 0, check: 0, fold: 0 },
+            river: { raise: 0, call: 0, check: 0, fold: 0 },
+        };
+
+        let result = {};
+        hand.playerNames.forEach((playerName) => {
+            result[playerName] = _.cloneDeep(metrics);
+        });
+
+        const rounds = { flop: hand.getFlop(), turn: hand.getTurn(), river: hand.getRiver() };
+        _.forEach(rounds, (round, key) => {
+            if (round) {
+                round.actions.forEach((action) => {
+                    if (action.type == ActionType.Bet || action.type == ActionType.Raise) {
+                        result[action.player.name][key].raise++;
+                    } else if (action.type == ActionType.Call) {
+                        result[action.player.name][key].call++;
+                    } else if (action.type == ActionType.Check) {
+                        result[action.player.name][key].check++;
+                    } else if (action.type == ActionType.Fold) {
+                        result[action.player.name][key].fold++;
+                    }
+                });
+            }
+        });
         return result;
     }
 

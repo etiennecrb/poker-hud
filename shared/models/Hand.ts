@@ -22,11 +22,19 @@ export default class Hand {
         return _.find(this.getBlindsRound().actions, {'type': ActionType.BigBlind}).player;
     }
 
-    getPreFlop(): Round {
-        return this.rounds[1];
+    getPreFlop(): Round | undefined {
+        return _.get(this.rounds, 1, undefined);
     }
 
-    getFlop(): Round {
-        return this.rounds[2];
+    getFlop(): Round | undefined {
+        return _.get(this.rounds, 2, undefined);
+    }
+
+    getTurn(): Round | undefined {
+        return _.get(this.rounds, 3, undefined);
+    }
+
+    getRiver(): Round | undefined {
+        return _.get(this.rounds, 4, undefined);
     }
 }
