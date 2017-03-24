@@ -49,7 +49,7 @@ function buildMetrics(metrics: MetricsObject) {
     let results = {
         count: {
             name: 'count',
-            value: metrics.count || 0
+            value: metrics.count && metrics.count > 9999 ? '' + Math.round(metrics.count / 1000) + 'k' : metrics.count || 0
         },
         vpip: {
             name: 'vpip',
@@ -73,7 +73,7 @@ function buildMetrics(metrics: MetricsObject) {
         },
         flop: {
             opp: {
-                value: metrics.flop.opp
+                value: metrics.flop.opp > 999 ? '' + Math.round(metrics.flop.opp / 1000) + 'k' : metrics.flop.opp
             },
             raise: {
                 name: 'raise',
@@ -94,7 +94,7 @@ function buildMetrics(metrics: MetricsObject) {
         },
         turn: {
             opp: {
-                value: metrics.turn.opp
+                value: metrics.turn.opp > 999 ? '' + Math.round(metrics.turn.opp / 1000) + 'k' : metrics.turn.opp
             },
             raise: {
                 name: 'raise',
@@ -115,7 +115,7 @@ function buildMetrics(metrics: MetricsObject) {
         },
         river: {
             opp: {
-                value: metrics.river.opp
+                value: metrics.river.opp > 999 ? '' + Math.round(metrics.river.opp / 1000) + 'k' : metrics.river.opp
             },
             raise: {
                 name: 'raise',

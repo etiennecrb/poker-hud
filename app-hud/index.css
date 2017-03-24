@@ -54,6 +54,7 @@ html, body {
 }
 .metric.metric--cell:first-child {
   flex: 1 1 15px;
+  white-space: nowrap;
 }
 .metric.metric--title {
   color: #cb4b16;
