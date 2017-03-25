@@ -19,6 +19,7 @@
     "mkdirp": "^0.5.1",
     "nedb": "^1.8.0",
     "ngx-electron": "0.0.10",
+    "normalize.css": "^5.0.0",
     "reflect-metadata": "^0.1.10",
     "rxjs": "5.0.1",
     "uuid": "^3.0.1",

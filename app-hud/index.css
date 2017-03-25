@@ -1,5 +1,5 @@
-html, body {
-  margin: 0 3px;
+body {
+  margin: 0;
   -webkit-app-region: drag;
   user-select: none;
   overflow: hidden;
@@ -18,8 +18,8 @@ html, body {
   align-items: center;
 }
 #header {
-  margin: 5px;
-  width: 100%;
+  margin: 5px 0;
+  width: 90%;
   flex: 1;
   display: flex;
   flex-direction: row;
