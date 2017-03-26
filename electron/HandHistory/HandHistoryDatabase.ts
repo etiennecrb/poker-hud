@@ -1,9 +1,10 @@
 import * as path from 'path';
 import * as Datastore from 'nedb';
 import * as Rx from 'rxjs';
+import * as _ from 'lodash';
 
 import Utils from '../Utils/Utils';
-import Hand from '../../shared/models/Hand';
+import Hand from '../../shared/models/hand';
 
 class HandHistoryDatabase {
     private db: Datastore;
@@ -34,7 +35,8 @@ class HandHistoryDatabase {
 
     upsert(object: Hand|Hand[]) {
         (Array.isArray(object) ? object : [object]).forEach((hand) => {
-            this.db.update({ id: hand.id }, hand, { upsert: true });
+            let extendedHand = _.extend({playerNames: _.map(hand.players, 'name')}, hand);
+            this.db.update({ id: hand.id }, extendedHand, { upsert: true });
         });
     }
 }

@@ -5,7 +5,7 @@ import './fonts.css'
 import { ipcRenderer } from 'electron';
 import * as _ from 'lodash';
 
-import MetricsObject from '../shared/metrics/MetricsObject';
+import MetricsObject from '../shared/metrics/metrics-object';
 
 let playerName: string = void 0;
 let metrics: {} = void 0;

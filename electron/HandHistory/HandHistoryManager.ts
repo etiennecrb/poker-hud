@@ -5,9 +5,9 @@ import * as Rx from 'rxjs';
 import * as chokidar from 'chokidar';
 
 import Config from '../Config/Config';
-import Parser from '../../shared/parsers/Parser';
+import * as Parser from '../../shared/parsers/parser';
 import HandHistoryDatabase from './HandHistoryDatabase';
-import Hand from '../../shared/models/Hand';
+import Hand from '../../shared/models/hand';
 import HudManager from '../Hud/HudManager';
 
 export default class HandHistoryManager {

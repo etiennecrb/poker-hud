@@ -3,10 +3,10 @@ import * as url from 'url';
 import * as path from 'path';
 import * as _ from 'lodash';
 
-import Hand from '../../shared/models/Hand';
-import Player from '../../shared/models/Player';
-import MetricsObject from '../../shared/metrics/MetricsObject';
-import MetricsEngine from '../../shared/metrics/MetricsEngine';
+import Hand from '../../shared/models/hand';
+import Player from '../../shared/models/player';
+import MetricsObject from '../../shared/metrics/metrics-object';
+import MetricsEngine from '../../shared/metrics/metrics-engine';
 import HandHistoryDatabase from '../HandHistory/HandHistoryDatabase';
 
 class HudManager {
@@ -15,42 +15,41 @@ class HudManager {
 
     setLastHand(lastHand: Hand): void {
         this.lastHand = lastHand;
-
-        HandHistoryDatabase.find({ playerNames: lastHand.playerNames })
+        HandHistoryDatabase.find({ playerNames: lastHand.players.map(p => p.name) })
             .subscribe((rawHands) => {
                 const hands = rawHands.map((rawHand) => {
-                    return new Hand(rawHand.id, new Date(rawHand.date), rawHand.playerBySeat, rawHand.playerNames,
+                    return new Hand(rawHand.id, new Date(rawHand.date), rawHand.players,
                         rawHand.buttonSeat, rawHand.rounds)
                 });
-                const metricsByPlayer = MetricsEngine.compute(hands, _.values(lastHand.playerBySeat));
-                this.updateHudWindows(this.lastHand.playerBySeat, metricsByPlayer);
+                const metricsByPlayer = MetricsEngine(hands, this.lastHand.players);
+                this.updateHudWindows(this.lastHand.players, metricsByPlayer);
             });
     }
 
     /**
      * Update hud windows with data from last hand players
      */
-    private updateHudWindows(playerBySeat: {[i: number]: Player}, metricsByPlayer: {[s: string]: MetricsObject}): void {
-        _.forIn(playerBySeat, (player: Player, seat: string) => {
+    private updateHudWindows(players: Player[], metricsByPlayer: {[s: string]: MetricsObject}): void {
+        players.forEach((player) => {
             const data = {
                 metrics: metricsByPlayer[player.name],
                 playerName: player.name
             };
 
-            if (!this.hudWindows[seat]) {
-                this.hudWindows[seat] = HudManager.createHudWindow();
-                this.hudWindows[seat].on('closed', () => delete this.hudWindows[seat]);
+            if (!this.hudWindows[player.seat]) {
+                this.hudWindows[player.seat] = HudManager.createHudWindow();
+                this.hudWindows[player.seat].on('closed', () => delete this.hudWindows[player.seat]);
 
-                this.hudWindows[seat].webContents.on('did-finish-load', () => {
-                    HudManager.updateHudWindow(this.hudWindows[seat], data);
+                this.hudWindows[player.seat].webContents.on('did-finish-load', () => {
+                    HudManager.updateHudWindow(this.hudWindows[player.seat], data);
                 });
             } else {
-                HudManager.updateHudWindow(this.hudWindows[seat], data);
+                HudManager.updateHudWindow(this.hudWindows[player.seat], data);
             }
         });
 
         // Close unused hud windows
-        _.difference(_.keys(this.hudWindows), _.keys(playerBySeat)).forEach((seat) => {
+        _.difference(_.keys(this.hudWindows), players.map(p => p.seat.toString())).forEach((seat) => {
             this.hudWindows[seat].close();
         });
     }

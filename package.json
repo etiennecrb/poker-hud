@@ -43,7 +43,7 @@
     "html-webpack-plugin": "^2.16.1",
     "raw-loader": "^0.5.1",
     "style-loader": "^0.13.1",
-    "tap": "^10.3.0",
+    "tape": "^4.6.3",
     "ts-node": "^2.1.0",
     "typescript": "~2.2",
     "webpack": "2.2.1"
@@ -57,7 +57,7 @@
     "prepackage": "rm -f dist/*.map && cp package.json dist/",
     "package": "electron-packager dist --all --out build/",
     "start": "npm run clean && npm run app-build && npm run electron-build && npm run electron-run | npm run app-watch",
-    "test": "ts-node node_modules/tap/bin/run ./shared/**/tests/*.ts",
+    "test": "ts-node node_modules/tape/bin/tape ./shared/**/*.spec.ts",
     "build": "npm run clean && npm run app-build && npm run electron-build && npm run package"
   },
   "author": "Étienne Corbillé",
