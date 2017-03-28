@@ -99,7 +99,7 @@ function endOfHand(line: string): boolean {
 function parseHandLine(hand: Hand, line: string): Hand {
     const idPrefix = 'HandId: #';
 
-    let split = line.split(' - ');
+    let split = line.replace(/".+"/, '').split(' - ');
     let id = split[2].slice(idPrefix.length);
     let date = new Date(split[4]);
 
