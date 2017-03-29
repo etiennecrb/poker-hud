@@ -2,7 +2,7 @@
 
 A simple HUD for [Winamax Poker](https://www.winamax.fr/en/) software. 
 
-When a file changes inside the hand history directory, the app parses it, computes some statistics and displays a widget per player around the table. Currently the app doesn't create a database so statistics are based on one single hand history file.
+The app create a database which store all hands available in the selected hand history folder. When a file changes inside the hand history directory, the app parses it, computes some statistics and displays a widget per player around the table.
 
 ![Screenshot](./static/hud.png)
 
@@ -30,14 +30,12 @@ These metrics are followed by the total number of opportunity to do so.
 npm install
 ```
 
-```javascript
-// Edit app/main.js
-function onReady() {
-    hud.watch('YOUR_HAND_HISTORY_DIRECTORY');
-}
-```
-
 ``` bash
 # run
-npm start
+npm run start
+```
+## Build for all platforms
+
+``` bash
+npm run build
 ```
