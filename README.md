@@ -1,3 +1,5 @@
+## Note: this project became [Furax Poker HUD](http://www.furaxpoker.com)
+
 # poker-hud
 
 A simple HUD for [Winamax Poker](https://www.winamax.fr/en/) software. 
